@@ -1,0 +1,186 @@
+library appbar_dropdown;
+
+import 'package:flutter/material.dart';
+import 'package:pointer_interceptor/pointer_interceptor.dart';
+
+
+/// A dropdown button that shows a menu when pressed.
+/// 
+/// Use it like this :
+/// 
+///   return Scaffold(
+///          appBar: AppBar(
+///            flexibleSpace: AppBarDropdown(
+///              items: [ "User 1", "User 2", "User 3" ]
+///              selected: "User 2",
+///              title: ( (user) => user.toString() ),
+///              onClick: ( (user) => print(user) ),
+///           ),
+
+
+class AppbarDropdown<T> extends StatefulWidget {
+
+  final List<T> items;
+  final T? selected;
+  final Function(T)? onClick;
+  /// title is a function that returns the String to be displayed as the AppBar title, and as the list item labels
+  /// eg. `(T item) => item.toString()` or `(e) => e.name` 
+  final String Function(T) title;
+
+  const AppbarDropdown({Key? key, 
+    required this.items,
+    this.selected,
+    this.onClick,
+    required this.title,
+  }) : super(key: key);
+
+  @override
+  _AppbarDropdownState createState() => _AppbarDropdownState(selected: selected);
+}
+
+
+class _AppbarDropdownState<T> extends State<AppbarDropdown> {
+
+  T selected;
+
+  _AppbarDropdownState({ required this.selected });
+
+  @override
+  Widget build(BuildContext context) {
+
+    return InkWell(
+              customBorder: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
+            onTap: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext c) => _appbarDropdownList(
+                    items: widget.items as List<T>,
+                    currentTitle: widget.title( selected ),
+                ),
+              );
+            },
+            child: Row(
+              children: [
+                const Spacer(flex: 2),
+                Expanded(
+                  flex: 4,
+                  child: Text(
+                    widget.title( selected ),
+                    style: Theme.of(context).textTheme.headline6,
+                    overflow: TextOverflow.clip,
+                    softWrap: false,
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                const Spacer(),
+                const Icon(Icons.arrow_drop_down),
+                const Spacer(),
+              ],
+            ),
+          );
+  }
+
+  
+  Dialog _appbarDropdownList({
+    required List<T> items,
+    required String currentTitle,
+  }) {
+
+      return Dialog(
+        insetPadding: const EdgeInsets.fromLTRB(0, 0, 0, 40.0),
+        elevation: 8,
+        child: PointerInterceptor(
+          child: Column( 
+            children: [ 
+
+              InkWell(
+                onTap: () {
+                  // if they click the header, then just close the dropdown
+                  Navigator.of(context, rootNavigator: true).pop();
+                },
+                child: Container( 
+                // padding: EdgeInsets.fromLTRB(120, 0, 0, 0),
+                  //padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 0), 
+                  margin: const EdgeInsets.fromLTRB(60, 0, (60 /* + estimatedButtonsWidth */), 0),
+                  height: AppBar().preferredSize.height,
+                  child: Row( 
+                    children: [
+                      const Spacer( flex: 2),
+                      Expanded( flex: 4,
+                        child: Text( 
+                          currentTitle,
+                          style: Theme.of(context).textTheme.headline6,
+                          overflow: TextOverflow.clip,
+                          softWrap: false,
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                      const Spacer(),
+                      const Icon(Icons.arrow_drop_down_circle),
+                      const Spacer(),
+                    ],
+                  ),
+                ),
+              ),
+
+              Container(height: 4, color: Colors.grey[300]),
+              
+              Expanded( child: ListView(
+                shrinkWrap: true,
+                children: <Widget>[
+                  const SizedBox(height: 20),
+                  ...items.map((e) => _buildRow( context: context, item: e) ), 
+                  const SizedBox(height: 20),
+                ],
+              ), ),
+
+            ],
+          ), 
+        ),
+      );
+    }
+
+    Widget _buildRow({
+      required BuildContext context,
+      required T item,
+    }) {
+
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Column(
+            children: <Widget>[
+              InkWell(
+                onTap: () {
+                  Navigator.of(context, rootNavigator: true).pop();
+                  setState( () {
+                    selected = item;
+                  });
+                  if (widget.onClick!=null) widget.onClick!(item);
+                },
+                child: Padding( 
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    children: <Widget>[
+                      const Spacer(),
+                      Text( widget.title(item) ),
+                      const Spacer(),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 6),
+              Container(height: 2, color: Colors.grey[300]),
+              const SizedBox(height: 6),
+            ],
+          ),
+      );
+    }
+
+
+
+
+}
+
+
