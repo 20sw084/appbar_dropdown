@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pointer_interceptor/pointer_interceptor.dart';
 
 
+
 /// A dropdown button that shows a menu when pressed.
 /// 
 /// Use it like this :
@@ -16,8 +17,6 @@ import 'package:pointer_interceptor/pointer_interceptor.dart';
 ///              title: ( (user) => user.toString() ),
 ///              onClick: ( (user) => print(user) ),
 ///           ),
-
-
 class AppbarDropdown<T> extends StatefulWidget {
 
   final List<T> items;
@@ -26,15 +25,30 @@ class AppbarDropdown<T> extends StatefulWidget {
   /// title is a function that returns the String to be displayed as the AppBar title, and as the list item labels
   /// eg. `(T item) => item.toString()` or `(e) => e.name` 
   final String Function(T) title;
+  /// optional parameter margin can be set to make more space if you have 
+  /// action buttons in your app bar, or if your list item titles are 
+  /// especially short (or long), default is EdgeInsets.fromLTRB(60, 0, 60, 0)
+  final EdgeInsets margin;
+  /// dialogInsetPadding lets you specify padding for the dropdown itself
+  /// default is EdgeInsets.fromLTRB(0, 0, 0, 40.0)
+  final EdgeInsets dialogInsetPadding;
+  /// dropdownAppBarColor can be overridden, defaults to `Theme.of(context).scaffoldBackgroundColor`
+  final Color? dropdownAppBarColor;
 
   const AppbarDropdown({Key? key, 
     required this.items,
     this.selected,
     this.onClick,
     required this.title,
-  }) : super(key: key);
+    this.dropdownAppBarColor,
+    margin,
+  }) : 
+    margin = const EdgeInsets.fromLTRB(0, 0, 0, 0), 
+    dialogInsetPadding = const EdgeInsets.fromLTRB(0, 0, 0, 40.0),
+    super(key: key);
 
   @override
+  // ignore: no_logic_in_create_state
   _AppbarDropdownState createState() => _AppbarDropdownState(selected: selected);
 }
 
@@ -48,7 +62,11 @@ class _AppbarDropdownState<T> extends State<AppbarDropdown> {
   @override
   Widget build(BuildContext context) {
 
-    return InkWell(
+    return Container(
+        color: widget.dropdownAppBarColor ?? Theme.of(context).scaffoldBackgroundColor,
+        margin: widget.margin,
+        height: AppBar().preferredSize.height,
+          child: InkWell(
               customBorder: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(20),
             ),
@@ -79,7 +97,8 @@ class _AppbarDropdownState<T> extends State<AppbarDropdown> {
                 const Spacer(),
               ],
             ),
-          );
+          ),
+    );
   }
 
   
@@ -89,10 +108,13 @@ class _AppbarDropdownState<T> extends State<AppbarDropdown> {
   }) {
 
       return Dialog(
-        insetPadding: const EdgeInsets.fromLTRB(0, 0, 0, 40.0),
+        insetPadding: widget.dialogInsetPadding,
         elevation: 8,
         child: PointerInterceptor(
-          child: Column( 
+          child: Container(
+            color: widget.dropdownAppBarColor ?? Theme.of(context).scaffoldBackgroundColor,
+            child: Column( 
+            
             children: [ 
 
               InkWell(
@@ -101,9 +123,8 @@ class _AppbarDropdownState<T> extends State<AppbarDropdown> {
                   Navigator.of(context, rootNavigator: true).pop();
                 },
                 child: Container( 
-                // padding: EdgeInsets.fromLTRB(120, 0, 0, 0),
-                  //padding: const EdgeInsets.fromLTRB(24.0, 0, 24.0, 0), 
-                  margin: const EdgeInsets.fromLTRB(60, 0, (60 /* + estimatedButtonsWidth */), 0),
+                  color: AppBar().backgroundColor,
+                  margin: widget.margin,
                   height: AppBar().preferredSize.height,
                   child: Row( 
                     children: [
@@ -125,7 +146,7 @@ class _AppbarDropdownState<T> extends State<AppbarDropdown> {
                 ),
               ),
 
-              Container(height: 4, color: Colors.grey[300]),
+             // Container(height: 4, color: Colors.grey[300]),
               
               Expanded( child: ListView(
                 shrinkWrap: true,
@@ -138,6 +159,7 @@ class _AppbarDropdownState<T> extends State<AppbarDropdown> {
 
             ],
           ), 
+        ),
         ),
       );
     }

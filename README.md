@@ -1,32 +1,52 @@
 
+# AppbarDropdown
+
 AppBar Dropdown is an attractive UI element that allows for navigation 
 via a dropdown menu in the AppBar.
 
 ## Features
 
-* Looks and behaves just like you woule expect a beautiful AppBar Dropdown menu to
-* Fully configurable
+* Looks and behaves just like a beautiful AppBar Dropdown menu should
+* Configurable
 * Works over the top of a WebView
 
-( video to go here ..)
+![Example video](example.gif)
 
 
-## Getting started
-
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder. 
+`AppbarDropdown` is used by setting it as the value for the `flexibleSpace` property
+of your `Scaffold`'s `AppBar`.
+
 
 ```dart
-const like = 'sample';
+    Scaffold(
+        appBar: AppBar(
+            flexibleSpace: AppbarDropdown(
+                items: [ for (var i=0;i<100;i++) "User $i" ],
+                selected: "User 2",
+                title: ( (user) => user.toString() ),
+                onClick: ( (user) => print(user) ),
+            ),
 ```
 
-## Additional information
+### Properties
 
-TODO: Tell users more about the package: where to find more information, how to 
-contribute to the package, how to file issues, what response they can expect 
-from the package authors, and more.
+#### Required
+
+* `items` - An array of any object type
+* `title` - A **function** that takes an object of the type in the items array and outputs a string title to display in the list, and in the heading.  (This might look something like `title: ( (p) => (p as MyAppPageObject).pageName )`)
+
+#### Suggested
+
+* `selected` - The initial **default value**, of the same type as the items in the array
+* `onClick` - A function that takes the same type of object, and does something with it (eg. change to new app page content, if the objects are page type Widgets)
+
+#### Optional
+
+* `dialogInsetPadding` - Specifies the padding for the dropdown
+* `dropdownAppBarColor` - Specifies the colour of the dropdown, including the header
+
+
+*If additional styling configuration is required, please modify and submit a pull request.*
