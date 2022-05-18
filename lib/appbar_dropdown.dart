@@ -186,7 +186,7 @@ class _AppbarDropdownState<T> extends State<AppbarDropdown> {
                   child: Row(
                     children: <Widget>[
                       const Spacer(),
-                      Text( widget.title(item) ),
+                      Text( widget.title(item), overflow: TextOverflow.ellipsis, ),
                       const Spacer(),
                     ],
                   ),
