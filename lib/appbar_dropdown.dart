@@ -49,15 +49,18 @@ class AppbarDropdown<T> extends StatefulWidget {
 
   @override
   // ignore: no_logic_in_create_state
-  _AppbarDropdownState createState() => _AppbarDropdownState(selected: selected);
+  _AppbarDropdownState<T> createState() => _AppbarDropdownState<T>(selected: selected);
 }
 
 
-class _AppbarDropdownState<T> extends State<AppbarDropdown> {
+class _AppbarDropdownState<T> extends State<AppbarDropdown<T>> {
 
-  T selected;
-
+  T? selected;
   _AppbarDropdownState({ required this.selected });
+
+  String _buildTitle(T? item) {
+    return item !=null ? widget.title( item ) : '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -74,8 +77,8 @@ class _AppbarDropdownState<T> extends State<AppbarDropdown> {
               showDialog(
                 context: context,
                 builder: (BuildContext c) => _appbarDropdownList(
-                    items: widget.items as List<T>,
-                    currentTitle: widget.title( selected ),
+                    items: widget.items,
+                    currentTitle: _buildTitle(selected),
                 ),
               );
             },
@@ -85,8 +88,9 @@ class _AppbarDropdownState<T> extends State<AppbarDropdown> {
                 Expanded(
                   flex: 4,
                   child: Text(
-                    widget.title( selected ),
-                    style: Theme.of(context).textTheme.headline6,
+                    _buildTitle(selected),
+                    //'Test',
+                    style: Theme.of(context).textTheme.titleLarge,
                     overflow: TextOverflow.clip,
                     softWrap: false,
                     textAlign: TextAlign.center,
@@ -132,7 +136,7 @@ class _AppbarDropdownState<T> extends State<AppbarDropdown> {
                       Expanded( flex: 4,
                         child: Text( 
                           currentTitle,
-                          style: Theme.of(context).textTheme.headline6,
+                          style: Theme.of(context).textTheme.titleLarge,
                           overflow: TextOverflow.clip,
                           softWrap: false,
                           textAlign: TextAlign.center,
@@ -186,7 +190,7 @@ class _AppbarDropdownState<T> extends State<AppbarDropdown> {
                   child: Row(
                     children: <Widget>[
                       const Spacer(),
-                      Flexible(flex: 12, child: Text( widget.title(item), overflow: TextOverflow.ellipsis, ),),
+                      Flexible(flex: 12, child: Text( _buildTitle(item), overflow: TextOverflow.ellipsis, ),),
                       const Spacer(),
                     ],
                   ),
