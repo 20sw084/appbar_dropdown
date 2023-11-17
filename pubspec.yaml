@@ -1,6 +1,6 @@
 name: appbar_dropdown
 description: AppBar Dropdown is an attractive UI element that allows for navigation via a dropdown menu in the AppBar.
-version: 0.0.3
+version: 0.0.4
 homepage: https://github.com/konectech/appbar_dropdown
 
 environment:
