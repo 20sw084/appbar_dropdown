@@ -35,7 +35,8 @@ class AppbarDropdown<T> extends StatefulWidget {
   /// dropdownAppBarColor can be overridden, defaults to `Theme.of(context).scaffoldBackgroundColor`
   final Color? dropdownAppBarColor;
 
-  const AppbarDropdown({Key? key, 
+  const AppbarDropdown({
+    super.key, 
     required this.items,
     this.selected,
     this.onClick,
@@ -49,14 +50,14 @@ class AppbarDropdown<T> extends StatefulWidget {
 
   @override
   // ignore: no_logic_in_create_state
-  _AppbarDropdownState<T> createState() => _AppbarDropdownState<T>(selected: selected);
+  AppbarDropdownState<T> createState() => AppbarDropdownState<T>(selected: selected);
 }
 
 
-class _AppbarDropdownState<T> extends State<AppbarDropdown<T>> {
+class AppbarDropdownState<T> extends State<AppbarDropdown<T>> {
 
   T? selected;
-  _AppbarDropdownState({ required this.selected });
+  AppbarDropdownState({ required this.selected });
 
   String _buildTitle(T? item) {
     return item !=null ? widget.title( item ) : '';
